@@ -1,2 +1,7 @@
 *.xlsx
 __pycache__/
+dol_clean.csv
+uscis_clean.csv
+LCA_Disclosure_Data*.csv
+LCA_Disclosure_Data*.xlsx
+Employer Information*.xlsx
