@@ -150,22 +150,46 @@ section[data-testid="stSidebar"] { display:none !important; }
 .sr-di { background:linear-gradient(135deg,#FFFFFF,#F8FAFF); border:1px solid #E8EEFF; border-radius:10px; padding:.85rem 1.1rem; box-shadow:0 1px 4px rgba(99,102,241,0.06); }
 .sr-dl { font-family:'DM Sans',sans-serif; font-size:.71rem; font-weight:600; text-transform:uppercase; letter-spacing:.06em; color:#94A3B8; margin-bottom:.3rem; }
 .sr-dv { font-family:'Syne',sans-serif; font-size:.98rem; font-weight:700; color:#0F172A; }
-.sr-bg { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem; }
-@media(max-width:680px) { .sr-bg { grid-template-columns:1fr; } }
-.sr-sgc { background:linear-gradient(135deg,#FAFBFF,#F5F7FF); border-radius:16px; box-shadow:0 4px 20px rgba(67,56,202,0.08); border:1px solid #E8EEFF; padding:1.6rem 1.9rem; animation:fadeUp .45s ease .1s both; }
+.sr-bg { display:flex; flex-direction:row; gap:1rem; margin-bottom:1rem; align-items:stretch; }
+.sr-sgc { background:linear-gradient(135deg,#FAFBFF,#F5F7FF); border-radius:16px; box-shadow:0 4px 20px rgba(67,56,202,0.08); border:1px solid #E8EEFF; padding:1.6rem 1.9rem; animation:fadeUp .45s ease .1s both; flex:1; min-width:0; }
+.sr-ec { background:linear-gradient(135deg,#FFFBF5,#FFF7ED); border-radius:16px; box-shadow:0 4px 20px rgba(217,119,6,0.06); border:1px solid #FDE68A; padding:1.6rem 1.9rem; animation:fadeUp .45s ease .15s both; flex:1; min-width:0; }
+@media(max-width:680px) { .sr-bg { flex-direction:column; } }
+
 .sr-ct { font-family:'Syne',sans-serif; font-size:.78rem; font-weight:700; text-transform:uppercase; letter-spacing:.09em; color:#6366F1; margin-bottom:1.3rem; }
 .sr-sr { display:grid; grid-template-columns:120px 1fr 44px; align-items:center; gap:.8rem; margin-bottom:.9rem; }
 .sr-srl { font-family:'DM Sans',sans-serif; font-size:.82rem; color:#475569; font-weight:500; }
 .sr-srt { height:8px; background:#EEF2FF; border-radius:100px; overflow:hidden; }
 .sr-srf { height:100%; border-radius:100px; animation:fadeIn .8s ease both; }
 .sr-srv { font-family:'Syne',sans-serif; font-size:.8rem; font-weight:700; color:#0F172A; text-align:right; }
-.sr-ec { background:linear-gradient(135deg,#FFFBF5,#FFF7ED); border-radius:16px; box-shadow:0 4px 20px rgba(217,119,6,0.06); border:1px solid #FDE68A; padding:1.6rem 1.9rem; animation:fadeUp .45s ease .15s both; }
+
 .sr-ec .sr-ct { color:#D97706; }
 .sr-ei { display:flex; gap:.75rem; margin-bottom:.75rem; font-family:'DM Sans',sans-serif; font-size:.9rem; color:#475569; line-height:1.6; align-items:flex-start; }
 .sr-dot { width:7px; height:7px; border-radius:50%; background:#F59E0B; margin-top:.5rem; flex-shrink:0; }
 .sr-fbc { background:#FFFFFF; border-radius:16px; border:1px solid #E2E8F0; padding:1.2rem 2rem; display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap; animation:fadeUp .45s ease .2s both; margin-bottom:.75rem; box-shadow:0 2px 8px rgba(0,0,0,0.04); }
 .sr-fbl { font-family:'DM Sans',sans-serif; font-size:.85rem; color:#475569; font-weight:500; }
 .sr-foot { text-align:center; font-family:'DM Sans',sans-serif; font-size:.74rem; color:#94A3B8; padding-bottom:.5rem; animation:fadeIn .5s ease .3s both; }
+.sr-verdict { font-family:'DM Sans',sans-serif; font-size:.92rem; font-weight:600; color:#1a1a1a; padding:.75rem 0 1rem; line-height:1.55; border-bottom:1px solid #F1F5F9; margin-bottom:.85rem; }
+
+/* Autocomplete row — sits flush below the search card */
+div[data-testid="stHorizontalBlock"] + div [data-testid="stSelectbox"] > div > div {
+  background:#FFFFFF !important;
+  border:1.5px solid #6366F1 !important;
+  border-top:none !important;
+  border-radius:0 0 10px 10px !important;
+  box-shadow:0 6px 16px rgba(99,102,241,0.14) !important;
+  font-family:'DM Sans',sans-serif !important;
+  font-size:.92rem !important;
+  color:#0F172A !important;
+}
+div[data-testid="stHorizontalBlock"] + div [data-testid="stSelectbox"] * {
+  color:#0F172A !important;
+  font-family:'DM Sans',sans-serif !important;
+  background:transparent !important;
+}
+div[data-testid="stHorizontalBlock"] + div [data-testid="stSelectbox"] > div > div > div > div {
+  background:#FFFFFF !important;
+}
+.sr-context { font-family:'DM Sans',sans-serif; font-size:.8rem; color:#D97706; background:#FEF3C7; border-radius:8px; padding:.5rem .75rem; margin-top:.5rem; }
 .sr-err { background:#FEE2E2; border:1.5px solid #FCA5A5; border-radius:16px; padding:1.6rem 2rem; text-align:center; animation:fadeIn .3s ease both; }
 .sr-err h3 { font-family:'Syne',sans-serif; font-weight:700; color:#DC2626; margin-bottom:.4rem; }
 .sr-err p { font-family:'DM Sans',sans-serif; font-size:.88rem; color:#475569; }
@@ -178,7 +202,107 @@ section[data-testid="stSidebar"] { display:none !important; }
 def load_company_names():
     df = pd.read_csv("company_signals.csv")
     names = df["clean_name"].dropna().unique().tolist()
-    return sorted([n.title() for n in names if isinstance(n, str) and len(n) > 2])
+    # Return uppercase for consistent comparison
+    return sorted([n.upper() for n in names if isinstance(n, str) and len(n) > 2])
+
+
+def build_explanation(sigs, name, role, yr, appr, confidence, wage_level):
+    """
+    Build a rich, specific plain-language explanation of the score.
+    Returns a dict with verdict, bullets, and context lines.
+    """
+    bullets = []
+    verdict = ""
+    context_lines = []
+
+    # Determine verdict
+    score_components = [
+        sigs["recency"],
+        sigs["approval_rate"],
+        sigs["role_match"],
+        sigs["trend"],
+        sigs["entry_level"],
+    ]
+    strong_signals = sum(1 for s in score_components if s >= 65)
+    weak_signals = sum(1 for s in score_components if s < 35)
+
+    if strong_signals >= 3 and weak_signals == 0:
+        verdict = f"The data makes a strong case. {name} consistently sponsors roles in this category with a high approval rate and recent activity."
+    elif strong_signals >= 2 and weak_signals <= 1:
+        verdict = f"The data is encouraging but not definitive. {name} has meaningful sponsorship activity in this area, though some signals are mixed."
+    elif weak_signals >= 3:
+        verdict = f"The data raises caution. Multiple signals are weak, suggesting this company may not be a reliable sponsor for {role} roles at your level."
+    else:
+        verdict = f"Mixed signals. Some indicators look positive, but key gaps reduce confidence in {name} as a reliable {role} sponsor."
+
+    # Recency — specific and comparative
+    if sigs["recency"] >= 90:
+        bullets.append(f"Filed H1B petitions as recently as {yr}, placing them among the most active sponsors in our dataset.")
+    elif sigs["recency"] >= 70:
+        bullets.append(f"Last filed petitions in {yr}. Recent enough to be a credible signal, though not among the most actively filing companies right now.")
+    elif sigs["recency"] >= 40:
+        bullets.append(f"Last petition filing was in {yr}. This is older than ideal — companies that filed recently are significantly more reliable signals.")
+    else:
+        bullets.append(f"No recent petition activity since {yr}. This is a meaningful red flag. Companies that stopped filing may have changed their sponsorship policies.")
+
+    # Approval rate — specific with interpretation
+    ar = sigs["approval_rate"]
+    if ar >= 95:
+        bullets.append(f"Petition approval rate of {ar:.0f}% — exceptionally high. This means when they commit to sponsoring, they almost always follow through. The industry average for large tech employers is roughly 85-90%.")
+    elif ar >= 80:
+        bullets.append(f"Petition approval rate of {ar:.0f}%, which is above average. Most denials in this range are administrative rather than substantive rejections.")
+    elif ar >= 60:
+        bullets.append(f"Petition approval rate of {ar:.0f}%. This is below average and suggests either speculative filings or a meaningful denial rate worth investigating before investing tailoring time.")
+    else:
+        bullets.append(f"Petition approval rate of only {ar:.0f}%. Low approval rates signal that either USCIS frequently rejects this employer's petitions, or they file opportunistically without genuine intent to sponsor.")
+
+    # Role match — most important for Kabir's decision
+    rm = sigs["role_match"]
+    if rm >= 40:
+        bullets.append(f"{rm:.0f}% of their historical filings match {role} role types by SOC code. This is a strong match — well above the typical 10-20% for generalist employers.")
+    elif rm >= 20:
+        bullets.append(f"{rm:.0f}% of their filings match {role} role types. This is a moderate signal. They do sponsor this category, but it is not their primary hiring focus.")
+    elif rm >= 8:
+        bullets.append(f"Only {rm:.0f}% of their filings match {role} role types. This company sponsors {role} roles rarely. Your application would be in a small minority of their sponsored positions — which does not disqualify you, but means less institutional experience handling this type of petition.")
+    else:
+        bullets.append(f"Very few filings ({rm:.0f}%) match {role} role types. This is the most important signal in your result: this company does not typically sponsor this job category. The overall score is pulled down significantly by this gap.")
+
+    # Trend — with specificity
+    if sigs["trend"] >= 75:
+        bullets.append("Sponsorship activity has been growing year over year across the data we have. Expanding companies are more likely to be open to new sponsorship arrangements.")
+    elif sigs["trend"] >= 50:
+        bullets.append("Sponsorship activity has been relatively stable. No strong growth or decline signal from recent years.")
+    elif sigs["trend"] >= 30:
+        bullets.append("Sponsorship activity has been declining year over year. This is a concern even if historical totals look strong — companies pulling back on sponsorship are higher risk.")
+    else:
+        bullets.append("Significant decline in sponsorship activity in recent years. This is a serious warning sign that should weigh heavily in your decision, regardless of their historical record.")
+
+    # Entry level — tied to lottery and Kabir's actual situation
+    el = sigs["entry_level"]
+    wl_map = {"I": "Level I", "II": "Level II", "III": "Level III", "IV": "Level IV"}
+    wl_display = wl_map.get(str(wage_level), str(wage_level))
+    lottery_map = {"I": "15%", "II": "31%", "III": "46%", "IV": "61%"}
+    lottery_display = lottery_map.get(str(wage_level), "unknown")
+
+    if el >= 60:
+        bullets.append(f"{el:.0f}% of their filings are at Wage Level I or II — a strong indicator they sponsor entry and mid-level roles. Their typical sponsorship is at {wl_display}, which carries approximately {lottery_display} selection odds under the 2026 wage-weighted lottery.")
+    elif el >= 35:
+        bullets.append(f"{el:.0f}% of their filings are at Wage Level I or II. This company sponsors a mix of entry, mid, and senior roles. Their typical sponsorship is at {wl_display} ({lottery_display} lottery odds under the 2026 system).")
+    else:
+        bullets.append(f"Only {el:.0f}% of their filings are at Wage Level I or II. This company primarily sponsors senior roles ({wl_display} typical, {lottery_display} lottery odds). Entry-level candidates may face an additional structural challenge getting to the petition stage.")
+
+    # Confidence note
+    if confidence < 50:
+        context_lines.append(f"Confidence is {confidence}% because this company has limited filing history in our dataset. Treat this score as directional, not definitive.")
+    elif confidence < 70:
+        context_lines.append(f"Confidence is {confidence}% — sufficient for a directional signal but not a firm conclusion. Some data points are based on partial matches or older filings.")
+
+    return {
+        "verdict": verdict,
+        "bullets": bullets,
+        "context": context_lines,
+    }
+
 
 # ── HERO ─────────────────────────────────────────────────────────────
 st.markdown("""
@@ -242,37 +366,26 @@ with col3:
 # and hasn't already selected a match
 if company_input and len(company_input) >= 2 and not st.session_state.get("company_confirmed"):
     all_companies = load_company_names()
-    query = company_input.upper()
-    starts_with = [c for c in all_companies if c.upper().startswith(query)][:8]
-    contains = [c for c in all_companies if query in c.upper() and not c.upper().startswith(query)][:4]
-    suggestions = starts_with + contains
+    query = company_input.upper().strip()
+    # ONLY show companies whose name STARTS WITH the query
+    # This prevents "infosys" from matching "A A Infosystems" or "Akinfosystem"
+    # Exact same behavior as Google/standard autocomplete
+    # all_companies is already uppercase; query is uppercased above
+    suggestions_raw = [c for c in all_companies if c.startswith(query)][:12]
+    # Title-case for display
+    suggestions = [c.title() for c in suggestions_raw]
 
     if suggestions:
-        st.markdown("""
-        <style>
-        div[data-testid="stHorizontalBlock"] ~ div [data-testid="stSelectbox"] > div > div {
-          border-radius: 0 0 10px 10px !important;
-          border-top: none !important;
-          margin-top: -2px !important;
-        }
-        </style>
-        """, unsafe_allow_html=True)
-        ac_col1, ac_col2, ac_col3 = st.columns([3, 2, 1.4])
-        with ac_col1:
+        # Render autocomplete in same 3-col layout as search row
+        # so it aligns precisely under the company input
+        ac1, ac2, ac3 = st.columns([3, 2, 1.4])
+        with ac1:
             selected = st.selectbox(
                 "Matching companies",
                 options=["— select to confirm —"] + suggestions,
                 key="ac_select",
                 label_visibility="collapsed"
             )
-        with ac_col2:
-            st.empty()
-        with ac_col3:
-            st.empty()
-        if selected != "— select to confirm —":
-            st.session_state["selected_company"] = selected
-            st.session_state["company_confirmed"] = True
-            st.rerun()
         if selected != "— select to confirm —":
             st.session_state["selected_company"] = selected
             st.session_state["company_confirmed"] = True
@@ -380,20 +493,15 @@ if st.session_state.result:
             for l, v, c in sc_cfg
         )
 
-        expl = []
-        if sigs["recency"] >= 80: expl.append(f"Filed H1B petitions as recently as {yr} — a strong current signal.")
-        elif sigs["recency"] >= 50: expl.append("Has filed petitions in recent years but activity may be slowing.")
-        else: expl.append(f"Last petition filing was in {yr}. Recency is a concern.")
-        if sigs["approval_rate"] >= 90: expl.append(f"Approval rate of {sigs['approval_rate']:.0f}% — almost always follows through when sponsoring.")
-        elif sigs["approval_rate"] >= 70: expl.append(f"Approval rate of {sigs['approval_rate']:.0f}% is reasonable.")
-        else: expl.append(f"Approval rate of {sigs['approval_rate']:.0f}% is below average, which may indicate speculative filings.")
-        if sigs["role_match"] >= 30: expl.append(f"{sigs['role_match']:.0f}% of filings match {role} role types — a meaningful signal.")
-        elif sigs["role_match"] >= 10: expl.append(f"Only {sigs['role_match']:.0f}% of filings match {role} types.")
-        else: expl.append(f"Very few filings ({sigs['role_match']:.0f}%) match {role} types. They may not typically sponsor this role.")
-        if sigs["trend"] >= 65: expl.append("Sponsorship activity is growing year over year — a positive directional signal.")
-        elif sigs["trend"] <= 35: expl.append("Sponsorship activity has declined in recent years, which reduces confidence.")
+        explanation = build_explanation(sigs, name, role, yr, appr, confidence, wage)
+        expl_bullets = explanation["bullets"]
+        verdict_text = explanation["verdict"]
+        context_lines = explanation["context"]
 
-        ehtml = "".join(f'<div class="sr-ei"><div class="sr-dot"></div><span>{e}</span></div>' for e in expl)
+        ehtml = f'<div class="sr-verdict">{verdict_text}</div>'
+        ehtml += "".join(f'<div class="sr-ei"><div class="sr-dot"></div><span>{e}</span></div>' for e in expl_bullets)
+        if context_lines:
+            ehtml += "".join(f'<div class="sr-context">{c}</div>' for c in context_lines)
         lbl = cls.replace("st","Strong").replace("mo","Moderate").replace("wk","Weak")
 
         st.markdown(f"""

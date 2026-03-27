@@ -115,7 +115,7 @@ def calculate_role_match(join_key, role):
 
 def get_score(company_search, role):
     search_key = make_join_key(company_search)
-    matches = signals[signals["join_key"].str.contains(search_key, na=False)]
+    matches = signals[signals["join_key"].str.startswith(search_key, na=False)]
 
     if len(matches) == 0:
         return {"found": False, "message": f"No data found for '{company_search}'. Try a shorter search term."}
@@ -144,9 +144,8 @@ def get_score(company_search, role):
     display_name = row.get("clean_name", search_key)
     if pd.isna(display_name):
         display_name = row.get("dol_clean_name", search_key)
-    entity_count = len(matches)
-    if entity_count > 1:
-        display_name = f"{display_name} (and {entity_count - 1} related entities)"
+    # Do not append entity count — it confuses users
+    # The aggregation is an internal detail, not a user-facing feature
 
     recency = row.get("recency_score", 50)
     trend = row.get("trend_score", 50)
@@ -167,14 +166,31 @@ def get_score(company_search, role):
     else:
         volume_score = 20.0
 
+    # Recalibrated weights:
+    # For high-volume employers (500+ approvals), role_match is penalized
+    # less because large companies file across many role types by necessity.
+    # Approval rate and volume carry more weight as primary trust signals.
+    role_match_weight = 0.15 if total_approvals_combined >= 500 else 0.20
+    recency_weight = 0.25
+    trend_weight = 0.12
+    volume_weight = 0.18
+    approval_weight = 0.15
+    entry_weight = 0.10
+    lottery_weight = 0.05
+
+    # Normalize approval rate to 0-100 scale (it already is)
+    # Boost: companies with >95% approval and >500 approvals get a base bonus
+    approval_bonus = 3.0 if (approval_rate_combined >= 95 and total_approvals_combined >= 500) else 0.0
+
     final_score = (
-        recency * 0.25 +
-        role_match * 0.20 +
-        trend * 0.15 +
-        volume_score * 0.15 +
-        approval_rate_combined / 100 * 10 +
-        entry_level_combined / 100 * 10 +
-        lottery * 0.05
+        recency * recency_weight +
+        role_match * role_match_weight +
+        trend * trend_weight +
+        volume_score * volume_weight +
+        approval_rate_combined * approval_weight +
+        entry_level_combined * entry_weight +
+        lottery * lottery_weight +
+        approval_bonus
     )
     final_score = round(min(max(final_score, 0), 100), 1)
 
